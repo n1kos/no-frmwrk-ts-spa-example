@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "tsc",
+    "dev": "parcel --port 8080 ./src/index.html",
+    "build": "parcel build ./src/index.html",
+    "compile": "tsc",
     "test": "test"
   },
   "engines": {
@@ -17,6 +19,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "lite-server": "^2.6.1",
+    "parcel-bundler": "^1.12.5",
     "prettier": "2.3.0",
     "prettier-eslint": "^12.0.0",
     "typescript": "^3.9.9",
