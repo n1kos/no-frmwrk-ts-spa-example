@@ -1,11 +1,26 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ES2015", "DOM", "DOM.Iterable", "ScriptHost"],
     "declaration": true,
     "outDir": "./public",
-    "strict": true
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "Node",
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "shared/*": ["/src/shared/*"],
+      "services/*": ["/src/shared/services/*"],
+      "modeling/*": ["/src/shared/modeling/*"]
+    }
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
   "exclude": ["node_modules", "**/__tests__/*"]
 }
