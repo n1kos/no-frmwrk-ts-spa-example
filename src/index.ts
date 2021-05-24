@@ -6,10 +6,13 @@ async function getMoviesNow(apiToken: APIToken): Promise<MovieData> {
   console.log('test')
   console.log(apiToken)
   const fetchUrl = `https://api.themoviedb.org/3/movie/76341?api_key=${apiToken.apiKey}`
-  const movies: Promise<MovieData> = await (await fetch(fetchUrl)).json()
-  // const data = await movies.json()
-  // console.log(data)
-  return movies
+  const res: Response = await fetch(fetchUrl)
+  if (res) {
+    const data: Promise<MovieData> = res.json()
+    return data
+  } else {
+    throw new Error()
+  }
 }
 
 async function loadDOM(): Promise<void> {
