@@ -6,6 +6,7 @@
     "declaration": true,
     "outDir": "./public",
     "strict": true,
+    "noImplicitAny": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "Node",
@@ -18,7 +19,7 @@
       "@/*": ["src/*"],
       "shared/*": ["/src/shared/*"],
       "services/*": ["/src/shared/services/*"],
-      "modeling/*": ["/src/shared/modeling/*"]
+      "model/*": ["/src/shared/model/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts"],
