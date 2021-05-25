@@ -51,6 +51,9 @@ async function init() {
   }
   observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
+      /**
+       * this will evaluate to true when the page first loads - see below
+       */
       if (entry.intersectionRatio > 0) {
         setTimeout(() => {
           getMoreMovies()
@@ -59,9 +62,14 @@ async function init() {
     })
   })
 
-  getMoreMovies()
+  /**
+   *! ok, this is a bit hacky cos when the page loads the condition for getting more is true
+   *! (since everything is flat) which resulted in an extra call. This is resolved by not getting
+   *! the list explitictly but perhaps a solution which would use listeners to attach the event
+   *! after everything was ready would be better
+   */
+  // getMoreMovies()
   observer.observe(observerNode)
-  // appNode.innerHTML = new Set(moviesNow).toString()
 }
 
 init()
