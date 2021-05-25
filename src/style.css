@@ -1,0 +1,36 @@
+body {
+  background-color: darkgray;
+}
+
+#app {
+  background-color: darkgray;
+}
+
+#container {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  width: 80%;
+  margin: auto;
+}
+
+.section {
+  background-color: burlywood;
+}
+
+.main {
+  background-color: chartreuse;
+}
+
+.movie-grid ul {
+  display: grid;
+  padding: 5px;
+  grid-gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
+}
+
+.movie-grid li {
+  display: inline-block;
+  list-style-type: none;
+  word-wrap: break-word;
+  padding: 5px;
+}
