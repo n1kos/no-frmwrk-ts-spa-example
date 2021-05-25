@@ -1,6 +1,6 @@
 import { APIToken } from './shared/model/model-common'
 import { ConfigurationResponse, MovieDetailsResponse, NowPlayingResponse } from './shared/model/model-results'
-import { MovieDetailsRequest } from './shared/model/model-requests'
+import { MovieDetailsRequest, MoviesNowRequest } from './shared/model/model-requests'
 import { ApiRequestService as ApiService } from './shared/services/request-service'
 
 export class App {
@@ -15,7 +15,7 @@ export class App {
     return await this.apiService.getConfig(params)
   }
 
-  public async getMoviesNow(params: APIToken): Promise<NowPlayingResponse> {
+  public async getMoviesNow(params: MoviesNowRequest): Promise<NowPlayingResponse> {
     return await this.apiService.getMoviesNow(params)
   }
 

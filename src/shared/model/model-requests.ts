@@ -1,3 +1,5 @@
+import { APIToken } from './model-common'
+
 export type MovieData = {
   id: string
   name: string
@@ -5,4 +7,8 @@ export type MovieData = {
 
 export interface MovieDetailsRequest {
   movieId: number
+}
+
+export interface MoviesNowRequest extends APIToken {
+  pageNo: number
 }

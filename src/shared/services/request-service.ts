@@ -1,6 +1,6 @@
 import { ConfigurationResponse, MovieDetailsResponse, NowPlayingResponse } from '@/shared/model/model-results'
 import { APIToken } from '@/shared/model/model-common'
-import { MovieDetailsRequest } from '@/shared/model/model-requests'
+import { MovieDetailsRequest, MoviesNowRequest } from '@/shared/model/model-requests'
 
 export class ApiRequestService {
   public async getConfig(params: APIToken): Promise<ConfigurationResponse> {
@@ -15,8 +15,8 @@ export class ApiRequestService {
     }
   }
 
-  public async getMoviesNow(params: APIToken): Promise<NowPlayingResponse> {
-    const fetchUrl = `https://api.themoviedb.org/3/movie/now_playing?api_key=${params.apiKey}&language=en-US&page=1`
+  public async getMoviesNow(params: MoviesNowRequest): Promise<NowPlayingResponse> {
+    const fetchUrl = `https://api.themoviedb.org/3/movie/now_playing?api_key=${params.apiKey}&language=en-US&page=${params.pageNo}`
     const response: Response = await fetch(fetchUrl)
     if (response) {
       const data: Promise<NowPlayingResponse> = response.json()
