@@ -1,5 +1,5 @@
 import { APIToken } from './shared/model/model-common'
-import { ConfigurationResponse, MovieDetailsResponse, NowPlayingResponse } from './shared/model/model-results'
+import { ConfigurationResponse, GenreResponse, MovieDetailsResponse, NowPlayingResponse } from './shared/model/model-results'
 import { MovieDetailsRequest, MoviesNowRequest } from './shared/model/model-requests'
 import { ApiRequestService as ApiService } from './shared/services/request-service'
 
@@ -13,6 +13,9 @@ export class App {
    */
   public async getConfig(params: APIToken): Promise<ConfigurationResponse> {
     return await this.apiService.getConfig(params)
+  }
+  public async getGenres(params: APIToken): Promise<GenreResponse> {
+    return await this.apiService.getGenres(params)
   }
 
   public async getMoviesNow(params: MoviesNowRequest): Promise<NowPlayingResponse> {

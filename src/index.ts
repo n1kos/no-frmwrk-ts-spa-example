@@ -3,6 +3,8 @@ import { App } from './app'
 import { ConfigurationResponse, NowPlayingResponse } from '@/shared/model/model-results'
 import { APIToken, Movie } from '@/shared/model/model-common'
 import { MoviesNowRequest } from './shared/model/model-requests'
+import { Genre } from './shared/model/model-common'
+import { GenreResponse } from './shared/model/model-results'
 
 async function init() {
   // loadDOM()
@@ -31,8 +33,17 @@ async function init() {
   const configObj: string = configObjPromise.images.base_url
   console.log('baseUrl', configObj)
 
+  const genres: Genre[] = await (await theApp.getGenres(theApiToken)).genres
+
   function updatePageRequest(_moviesNowCurentRequest: MoviesNowRequest): void {
     _moviesNowCurentRequest.pageNo++
+  }
+
+  function getGenreTitle(_ids: number[] = [], _genres: Genre[]): string {
+    return _ids
+      .map((theId: number) => genres.filter((element: Genre) => element.id == theId))
+      .map((element: Genre[]) => element[0].name)
+      .toString()
   }
 
   async function getMoreMovies() {
@@ -43,8 +54,9 @@ async function init() {
       for (const movie of moviesNow) {
         const movieLiNode: HTMLLIElement = document.createElement('li')
         movieLiNode.innerText =
-          `${movie.title}, ${movie.release_date}, ${movie.original_title}, ${movie.vote_average}, ${movie.overview}, ${movie.genre_ids}` ||
-          'No Title'
+          `${movie.title}, ${movie.release_date}, ${movie.original_title}, ${movie.vote_average}, ${
+            movie.overview
+          }, ${getGenreTitle(movie.genre_ids, genres)}` || 'No Title'
         moviesNode.appendChild(movieLiNode)
       }
     }

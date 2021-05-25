@@ -1,4 +1,9 @@
-import { ConfigurationResponse, MovieDetailsResponse, NowPlayingResponse } from '@/shared/model/model-results'
+import {
+  ConfigurationResponse,
+  GenreResponse,
+  MovieDetailsResponse,
+  NowPlayingResponse,
+} from '@/shared/model/model-results'
 import { APIToken } from '@/shared/model/model-common'
 import { MovieDetailsRequest, MoviesNowRequest } from '@/shared/model/model-requests'
 
@@ -8,7 +13,17 @@ export class ApiRequestService {
     const response: Response = await fetch(configUrl)
     if (response) {
       const data: Promise<ConfigurationResponse> = response.json()
-      console.log('copnfig data', data)
+      return data
+    } else {
+      throw new Error()
+    }
+  }
+
+  public async getGenres(params: APIToken): Promise<GenreResponse> {
+    const configUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${params.apiKey}&language=en-US`
+    const response: Response = await fetch(configUrl)
+    if (response) {
+      const data: Promise<GenreResponse> = response.json()
       return data
     } else {
       throw new Error()
@@ -20,7 +35,6 @@ export class ApiRequestService {
     const response: Response = await fetch(fetchUrl)
     if (response) {
       const data: Promise<NowPlayingResponse> = response.json()
-      console.log('NowPlaying data', data)
       return data
     } else {
       throw new Error()

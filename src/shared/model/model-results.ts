@@ -1,5 +1,5 @@
-import { LatestMovie, Movie } from './model-common'
-import { MovieDetails } from './model-common';
+import { LatestMovie, Movie, Genre } from './model-common'
+import { MovieDetails } from './model-common'
 export interface ConfigurationResponse {
   images: {
     base_url: string
@@ -29,7 +29,11 @@ export interface NowPlayingResponse {
 }
 
 export interface MovieDetailsResponse {
-  data : MovieDetails
+  data: MovieDetails
+}
+
+export interface GenreResponse {
+  genres: Genre[]
 }
 // export interface JSONPromisResponse {
 //   data?: {}
