@@ -25,6 +25,14 @@
       "type": "vscode-edge-devtools.debug",
       "url": "http://localhost:8080",
       "webRoot": "${workspaceFolder}/src"
+    },
+
+    {
+      "type": "pwa-msedge",
+      "url": "http://localhost:8080",
+      "request": "launch",
+      "name": "Launch Edge and debug in Code",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     }
   ]
 }
