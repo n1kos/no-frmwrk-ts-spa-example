@@ -15,12 +15,15 @@ async function init() {
     apiKey: theApiToken.apiKey,
     pageNo: 1,
   }
-  const appNode: HTMLElement = document.getElementById('app') as HTMLElement
+  // const appNode: HTMLElement = document.getElementById('container') as HTMLElement
+  const moviesParentNode: HTMLElement = document.getElementById('movies') as HTMLElement
+  const observerNode: HTMLElement = document.getElementById('infinite-scroll-trigger') as HTMLElement
   const moviesNode: HTMLUListElement = document.createElement('ul')
+  let observer: IntersectionObserver
 
   let moviesNowPromise: NowPlayingResponse
   let moviesNow: Movie[] | undefined
-  appNode.appendChild(moviesNode)
+  moviesParentNode.appendChild(moviesNode)
   /**
    ** get the configuration data which might be needed. #todo: store in localstorage, as suggested
    */
@@ -46,9 +49,18 @@ async function init() {
       }
     }
   }
+  observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.intersectionRatio > 0) {
+        setTimeout(() => {
+          getMoreMovies()
+        }, 1000)
+      }
+    })
+  })
 
   getMoreMovies()
-  appNode.addEventListener('click', getMoreMovies)
+  observer.observe(observerNode)
   // appNode.innerHTML = new Set(moviesNow).toString()
 }
 
