@@ -32,37 +32,23 @@ async function init() {
     _moviesNowCurentRequest.pageNo++
   }
 
-  moviesNowPromise = await theApp.getMoviesNow(moviesNowCurentRequest)
-  moviesNow = moviesNowPromise.results
-  console.log('moviesNow', moviesNow)
-
-  if (moviesNow) {
-    updatePageRequest(moviesNowCurentRequest)
-    for (const movie of moviesNow) {
-      const movieLiNode: HTMLLIElement = document.createElement('li')
-      movieLiNode.innerText =
-        `${movie.title}, ${movie.release_date}, ${movie.original_title}, ${movie.vote_average}, ${movie.overview}, ${movie.genre_ids}` ||
-        'No Title'
-      moviesNode.appendChild(movieLiNode)
-    }
-
-    async function getMoreMovies() {
-      moviesNowPromise = await theApp.getMoviesNow(moviesNowCurentRequest)
-      moviesNow = moviesNowPromise.results
-      if (moviesNow) {
-        updatePageRequest(moviesNowCurentRequest)
-        for (const movie of moviesNow) {
-          const movieLiNode: HTMLLIElement = document.createElement('li')
-          movieLiNode.innerText =
-            `${movie.title}, ${movie.release_date}, ${movie.original_title}, ${movie.vote_average}, ${movie.overview}, ${movie.genre_ids}` ||
-            'No Title'
-          moviesNode.appendChild(movieLiNode)
-        }
+  async function getMoreMovies() {
+    moviesNowPromise = await theApp.getMoviesNow(moviesNowCurentRequest)
+    moviesNow = moviesNowPromise.results
+    if (moviesNow) {
+      updatePageRequest(moviesNowCurentRequest)
+      for (const movie of moviesNow) {
+        const movieLiNode: HTMLLIElement = document.createElement('li')
+        movieLiNode.innerText =
+          `${movie.title}, ${movie.release_date}, ${movie.original_title}, ${movie.vote_average}, ${movie.overview}, ${movie.genre_ids}` ||
+          'No Title'
+        moviesNode.appendChild(movieLiNode)
       }
     }
-
-    appNode.addEventListener('click', getMoreMovies)
   }
+
+  getMoreMovies()
+  appNode.addEventListener('click', getMoreMovies)
   // appNode.innerHTML = new Set(moviesNow).toString()
 }
 
