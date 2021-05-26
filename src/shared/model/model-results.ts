@@ -31,7 +31,6 @@ export interface MovieDetailsResponse {
 export interface GenreResponse {
   genres: Genre[]
 }
-
 export interface MovieDetailsVideosResponse {
   id?: number
   results?: {
@@ -64,7 +63,9 @@ export interface MovieDetailsReviewsResponse {
 export interface MovieDetailsSimilarResponse extends Movie, PageInfo {
   results: Movie[]
 }
-
+export interface MoviesSearchResponse extends Movie, PageInfo {
+  results: Movie[]
+}
 // export interface JSONPromisResponse {
 //   data?: {}
 //   errors?: Array<{ message: string }>

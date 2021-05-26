@@ -13,3 +13,6 @@ export interface MoviesNowRequest extends APIToken {
 export interface MoviesMoreRequest extends APIToken {
   movieId: string
 }
+export interface MoviesSearchRequest extends MoviesNowRequest {
+  query: string
+}

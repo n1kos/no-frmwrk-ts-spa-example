@@ -2,7 +2,7 @@ import 'regenerator-runtime/runtime'
 import { App } from './app'
 import { ConfigurationResponse, NowPlayingResponse } from '@/shared/model/model-results'
 import { APIToken, Movie } from '@/shared/model/model-common'
-import { MoviesMoreRequest, MoviesNowRequest } from './shared/model/model-requests'
+import { MoviesMoreRequest, MoviesNowRequest, MoviesSearchRequest } from './shared/model/model-requests'
 import { Genre } from './shared/model/model-common'
 
 async function init() {
@@ -17,12 +17,19 @@ async function init() {
     pageNo: 1,
   }
 
+  const moviesSearchRequest: MoviesSearchRequest = {
+    apiKey: theApiToken.apiKey,
+    pageNo: 1,
+    query: '',
+  }
+
   const movieMoreDetails: MoviesMoreRequest = {
     apiKey: theApiToken.apiKey,
     movieId: '',
   }
   // const appNode: HTMLElement = document.getElementById('container') as HTMLElement
   const moviesParentNode: HTMLElement = document.getElementById('movies') as HTMLElement
+  const searchBtnNode: HTMLInputElement = document.getElementById('moviesSearch') as HTMLInputElement
   const observerNode: HTMLElement = document.getElementById('infinite-scroll-trigger') as HTMLElement
   const moviesNode: HTMLUListElement = document.createElement('ul')
   let observer: IntersectionObserver
@@ -39,18 +46,30 @@ async function init() {
 
   const genres: Genre[] = (await theApp.getGenres(theApiToken)).genres
 
-  function _updatePageRequest(_moviesNowCurentRequest: MoviesNowRequest): void {
+  const debounce = (func: Function, wait: number) => {
+    let timeout: number
+    return function executedFunction(...args: []) {
+      const later = () => {
+        clearTimeout(timeout)
+        func(...args)
+      }
+      clearTimeout(timeout)
+      timeout = setTimeout(later, wait)
+    }
+  }
+
+  const _updatePageRequest = (_moviesNowCurentRequest: MoviesNowRequest): void => {
     _moviesNowCurentRequest.pageNo++
   }
 
-  function _getGenreTitle(_ids: number[] = [], _genres: Genre[]): string {
+  const _getGenreTitle = (_ids: number[] = [], _genres: Genre[]): string => {
     return _ids
       .map((theId: number) => genres.filter((element: Genre) => element.id == theId))
       .map((element: Genre[]) => element[0].name)
       .toString()
   }
 
-  function _getStars(rating: number = 0) {
+  const _getStars = (rating: number = 0) => {
     // rating is on 1-10 scale, we are using a 1 - 5 and round to nearest half
     rating = Math.round((rating / 2) * 2) / 2
     const output = []
@@ -63,39 +82,42 @@ async function init() {
     return output.join('')
   }
 
-  function _getYear(_date: Date = new Date(1, 1, 1)): number {
+  const _getYear = (_date: Date = new Date(1, 1, 1)): number => {
     const _dateRelease = new Date(_date.toString()).getFullYear()
     return _dateRelease == 1 ? 0 : _dateRelease
   }
 
-  async function _getMoreMovies() {
-    moviesNowPromise = await theApp.getMoviesNow(moviesNowCurentRequest)
-    moviesNow = moviesNowPromise.results
-    if (moviesNow) {
-      document.dispatchEvent(new CustomEvent('movieDataLoaded', { detail: moviesNow }))
-      _updatePageRequest(moviesNowCurentRequest)
-      for (const movie of moviesNow) {
-        const movieLiNode: HTMLLIElement = document.createElement('li')
-        movieLiNode.setAttribute('data-movie-id', movie.id?.toString() || '')
-        movieLiNode.setAttribute('data-movie-link', 'true')
-        movieLiNode.innerHTML =
-          `<div class="movie-column">
+  const _buildDOMwithResults = (_movies: Movie[]): void => {
+    document.dispatchEvent(new CustomEvent('movieDataLoaded', { detail: moviesNow }))
+    _updatePageRequest(moviesNowCurentRequest)
+    for (const movie of _movies) {
+      const movieLiNode: HTMLLIElement = document.createElement('li')
+      movieLiNode.setAttribute('data-movie-id', movie.id?.toString() || '')
+      movieLiNode.setAttribute('data-movie-link', 'true')
+      movieLiNode.innerHTML =
+        `<div class="movie-column">
           <img class="responsive" loading="lazy" width="500" height="750" src="${configObj}w500/${movie.poster_path}" />
            </div>
            <div class="movie-column">
            <h1 class="movie-title">${movie.title}<span class="movie-date">(${_getYear(
-            movie.release_date
-          )})</span><span class="movie-more">...more</span></h1><span class="movie-genres">${_getGenreTitle(
-            movie.genre_ids,
-            genres
-          )}</span><p>${movie.overview}</p><p class="movie-stars">${_getStars(movie.vote_average)}</p></div>` ||
-          'No Info'
-        moviesNode.appendChild(movieLiNode)
-      }
+          movie.release_date
+        )})</span><span class="movie-more">...more</span></h1><span class="movie-genres">${_getGenreTitle(
+          movie.genre_ids,
+          genres
+        )}</span><p>${movie.overview}</p><p class="movie-stars">${_getStars(movie.vote_average)}</p></div>` || 'No Info'
+      moviesNode.appendChild(movieLiNode)
     }
   }
 
-  async function _showMoreDetails(evt: Event) {
+  const _getMoreMovies = async () => {
+    moviesNowPromise = await theApp.getMoviesNow(moviesNowCurentRequest)
+    moviesNow = moviesNowPromise.results
+    if (moviesNow) {
+      _buildDOMwithResults(moviesNow)
+    }
+  }
+
+  const _showMoreDetails = async (evt: Event) => {
     const _el = evt.target as HTMLElement
     const _desired = _el.closest('[data-movie-link]')
     const _movieId = _desired?.getAttribute('data-movie-id')
@@ -109,6 +131,26 @@ async function init() {
   document.addEventListener('movieDataLoaded', ((event: CustomEvent) => {
     console.log(event.detail)
   }) as EventListener)
+
+  const _getSearchedMovies = async (searchString: string) => {
+    moviesSearchRequest.query = searchString
+    moviesNowPromise = await theApp.getMoviesSearch(moviesSearchRequest)
+    moviesNow = moviesNowPromise.results
+    if (moviesNow) {
+      moviesNode.innerHTML = ''
+      _buildDOMwithResults(moviesNow)
+    }
+  }
+
+  const _searchDebounced = debounce(function (evt: Event) {
+    // allow only searches with at least 3 chars, although this will exclude some, ie 'IT', 'ET'
+    // but can mitigated by pressing enter thouggh this might be somewhat confusing.. i ll see
+    if (searchBtnNode.value.match(/\w{3}/)) {
+      // sanitise input
+      _getSearchedMovies(searchBtnNode.value.trim().replace(/[\.'"\*\+-@#]/g, ''))
+    }
+  }, 250)
+  searchBtnNode.addEventListener('keyup', _searchDebounced)
 
   observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {

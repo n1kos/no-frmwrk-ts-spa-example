@@ -3,9 +3,10 @@ import {
   ConfigurationResponse,
   GenreResponse,
   MovieDetailsResponse,
+  MoviesSearchResponse,
   NowPlayingResponse,
 } from './shared/model/model-results'
-import { MoviesMoreRequest, MoviesNowRequest } from './shared/model/model-requests'
+import { MoviesMoreRequest, MoviesNowRequest, MoviesSearchRequest } from './shared/model/model-requests'
 import { ApiRequestService as ApiService } from './shared/services/request-service'
 
 export class App {
@@ -25,6 +26,10 @@ export class App {
 
   public async getMoviesNow(params: MoviesNowRequest): Promise<NowPlayingResponse> {
     return await this.apiService.getMoviesNow(params)
+  }
+
+  public async getMoviesSearch(params: MoviesSearchRequest): Promise<MoviesSearchResponse> {
+    return await this.apiService.getMoviesSearch(params)
   }
 
   public async getMovieDetails(params: MoviesMoreRequest): Promise<MovieDetailsResponse> {

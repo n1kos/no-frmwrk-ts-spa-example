@@ -5,10 +5,11 @@ import {
   MovieDetailsReviewsResponse,
   MovieDetailsSimilarResponse,
   MovieDetailsVideosResponse,
+  MoviesSearchResponse,
   NowPlayingResponse,
 } from '@/shared/model/model-results'
 import { APIToken } from '@/shared/model/model-common'
-import { MoviesMoreRequest, MoviesNowRequest } from '@/shared/model/model-requests'
+import { MoviesMoreRequest, MoviesNowRequest, MoviesSearchRequest } from '@/shared/model/model-requests'
 
 export class ApiRequestService {
   public async getConfig(params: APIToken): Promise<ConfigurationResponse> {
@@ -43,6 +44,18 @@ export class ApiRequestService {
       throw new Error()
     }
   }
+
+  public async getMoviesSearch(params: MoviesSearchRequest): Promise<MoviesSearchResponse> {
+    const fetchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${params.apiKey}&language=en-US&query=${params.query}&page=${params.pageNo}`
+    const response: Response = await fetch(fetchUrl)
+    if (response) {
+      const data: Promise<MoviesSearchResponse> = response.json()
+      return data
+    } else {
+      throw new Error()
+    }
+  }
+
 
   public async getMovieDetails(params: MoviesMoreRequest): Promise<MovieDetailsResponse> {
     const fetchUrl = `https://api.themoviedb.org/3/movie/${params.movieId}?api_key=${params.apiKey}&language=en-US&page=1`
