@@ -12,8 +12,10 @@ import { APIToken } from '@/shared/model/model-common'
 import { MoviesMoreRequest, MoviesNowRequest, MoviesSearchRequest } from '@/shared/model/model-requests'
 
 export class ApiRequestService {
+  API_PATH = 'https://api.themoviedb.org/3'
+
   public async getConfig(params: APIToken): Promise<ConfigurationResponse> {
-    const configUrl = `https://api.themoviedb.org/3/configuration?api_key=${params.apiKey}`
+    const configUrl = `${this.API_PATH}/configuration?api_key=${params.apiKey}`
     const response: Response = await fetch(configUrl)
     if (response) {
       const data: Promise<ConfigurationResponse> = response.json()
@@ -24,7 +26,7 @@ export class ApiRequestService {
   }
 
   public async getGenres(params: APIToken): Promise<GenreResponse> {
-    const configUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=${params.apiKey}&language=en-US`
+    const configUrl = `${this.API_PATH}/genre/movie/list?api_key=${params.apiKey}&language=en-US`
     const response: Response = await fetch(configUrl)
     if (response) {
       const data: Promise<GenreResponse> = response.json()
@@ -35,7 +37,7 @@ export class ApiRequestService {
   }
 
   public async getMoviesNow(params: MoviesNowRequest): Promise<NowPlayingResponse> {
-    const fetchUrl = `https://api.themoviedb.org/3/movie/now_playing?api_key=${params.apiKey}&language=en-US&page=${params.pageNo}`
+    const fetchUrl = `${this.API_PATH}/movie/now_playing?api_key=${params.apiKey}&language=en-US&page=${params.pageNo}`
     const response: Response = await fetch(fetchUrl)
     if (response) {
       const data: Promise<NowPlayingResponse> = response.json()
@@ -46,7 +48,7 @@ export class ApiRequestService {
   }
 
   public async getMoviesSearch(params: MoviesSearchRequest): Promise<MoviesSearchResponse> {
-    const fetchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${params.apiKey}&language=en-US&query=${params.query}&page=${params.pageNo}`
+    const fetchUrl = `${this.API_PATH}/search/movie?api_key=${params.apiKey}&language=en-US&query=${params.query}&page=${params.pageNo}`
     const response: Response = await fetch(fetchUrl)
     if (response) {
       const data: Promise<MoviesSearchResponse> = response.json()
@@ -58,7 +60,7 @@ export class ApiRequestService {
 
 
   public async getMovieDetails(params: MoviesMoreRequest): Promise<MovieDetailsResponse> {
-    const fetchUrl = `https://api.themoviedb.org/3/movie/${params.movieId}?api_key=${params.apiKey}&language=en-US&page=1`
+    const fetchUrl = `${this.API_PATH}/movie/${params.movieId}?api_key=${params.apiKey}&language=en-US&page=1`
     const response: Response = await fetch(fetchUrl)
     if (response) {
       const data: Promise<MovieDetailsResponse> = response.json()
@@ -69,7 +71,7 @@ export class ApiRequestService {
   }
 
   public async getMovieDetailsReviews(params: MoviesMoreRequest): Promise<MovieDetailsReviewsResponse> {
-    const fetchUrl = `https://api.themoviedb.org/3/movie/${params.movieId}/reviews?api_key=${params.apiKey}&language=en-US&page=1`
+    const fetchUrl = `${this.API_PATH}/movie/${params.movieId}/reviews?api_key=${params.apiKey}&language=en-US&page=1`
     const response: Response = await fetch(fetchUrl)
     if (response) {
       const data: Promise<MovieDetailsReviewsResponse> = response.json()
@@ -80,7 +82,7 @@ export class ApiRequestService {
   }
 
   public async getMovieDetailsSimilar(params: MoviesMoreRequest): Promise<MovieDetailsSimilarResponse> {
-    const fetchUrl = `https://api.themoviedb.org/3/movie/${params.movieId}/similar?api_key=${params.apiKey}&language=en-US&page=1`
+    const fetchUrl = `${this.API_PATH}/movie/${params.movieId}/similar?api_key=${params.apiKey}&language=en-US&page=1`
     const response: Response = await fetch(fetchUrl)
     if (response) {
       const data: Promise<MovieDetailsSimilarResponse> = response.json()
@@ -91,7 +93,7 @@ export class ApiRequestService {
   }
 
   public async getMovieDetailsVideos(params: MoviesMoreRequest): Promise<MovieDetailsVideosResponse> {
-    const fetchUrl = `https://api.themoviedb.org/3/movie/${params.movieId}/videos?api_key=${params.apiKey}&language=en-US&page=1`
+    const fetchUrl = `${this.API_PATH}/movie/${params.movieId}/videos?api_key=${params.apiKey}&language=en-US&page=1`
     const response: Response = await fetch(fetchUrl)
     if (response) {
       const data: Promise<MovieDetailsVideosResponse> = response.json()
