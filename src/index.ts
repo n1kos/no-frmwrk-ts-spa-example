@@ -33,7 +33,8 @@ async function init() {
 
   // get references to dom nodes
   const moviesParentNode: HTMLElement = document.getElementById('movies') as HTMLElement
-  const searchBtnNode: HTMLInputElement = document.getElementById('moviesSearch') as HTMLInputElement
+  const searchBtnNode: HTMLInputElement = document.getElementById('movies-search') as HTMLInputElement
+  const moviesNowhBtnNode: HTMLButtonElement = document.getElementById('movies-now') as HTMLButtonElement
   const observerNode: HTMLElement = document.getElementById('infinite-scroll-trigger') as HTMLElement
   const moviesNode: HTMLUListElement = document.createElement('ul')
   let observer: IntersectionObserver
@@ -136,7 +137,7 @@ async function init() {
       moviesNode.innerHTML = ''
       _buildDOMwithResults(moviesDataResults)
     } else {
-      moviesSearchRequest.query = "";
+      moviesSearchRequest.query = ''
       moviesSearchRequest.pageNo = 1
       alert('no results')
     }
@@ -155,6 +156,17 @@ async function init() {
   }, 250)
   searchBtnNode.addEventListener('keyup', _searchDebounced)
 
+  /**
+   * need to have a way to go back to original results
+   */
+  moviesNowhBtnNode.addEventListener('click', () => {
+    if (moviesSearchRequest.query !== '') {
+      moviesSearchRequest.query = ''
+      moviesSearchRequest.pageNo = 1
+      moviesNowCurentRequest.pageNo = 1
+      moviesNode.innerHTML = ''
+    }
+  })
   /**
    * use the observer native API for the infinit scrolling
    */
