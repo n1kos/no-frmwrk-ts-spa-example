@@ -72,13 +72,15 @@ async function init() {
     moviesNowPromise = await theApp.getMoviesNow(moviesNowCurentRequest)
     moviesNow = moviesNowPromise.results
     if (moviesNow) {
+      document.dispatchEvent(new CustomEvent('movieDataLoaded', { detail: moviesNow }))
       _updatePageRequest(moviesNowCurentRequest)
       for (const movie of moviesNow) {
         const movieLiNode: HTMLLIElement = document.createElement('li')
         movieLiNode.setAttribute('data-movie-id', movie.id?.toString() || '')
         movieLiNode.setAttribute('data-movie-link', 'true')
         movieLiNode.innerHTML =
-          ` <h1 class='movie-title'>${movie.title}<span class='movie-date'>(${_getYear(
+          `<img loading='lazy' width="500" height="750" src="${configObj}w500/${movie.poster_path}" />
+           <h1 class='movie-title'>${movie.title}<span class='movie-date'>(${_getYear(
             movie.release_date
           )})</span><span class='movie-more'>...more</span></h1><span class='movie-genres'>${_getGenreTitle(
             movie.genre_ids,
@@ -99,6 +101,10 @@ async function init() {
     return _movieData
   }
   moviesNode.addEventListener('click', _showMoreDetails)
+
+  document.addEventListener('movieDataLoaded', ((event: CustomEvent) => {
+    console.log(event.detail)
+  }) as EventListener)
 
   observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
