@@ -1,0 +1,22 @@
+.star {
+  font-size: x-large;
+  display: inline-block;
+  color: gray;
+}
+.star:last-child {
+  margin-right: 0;
+}
+.star:before {
+  content: '\2605';
+}
+.star.on {
+  color: rgb(209, 183, 36);
+}
+.star.half:after {
+  content: '\2605';
+  color: rgb(209, 183, 36);
+  position: absolute;
+  margin-left: -20px;
+  width: 10px;
+  overflow: hidden;
+}

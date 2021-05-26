@@ -1,0 +1,46 @@
+body {
+  background-color: darkgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  margin: auto;
+}
+
+#container {
+  width: 80%;
+  background: crimson;
+  padding: 20px;
+  margin: 40px 0;
+  border-radius: 10px;
+}
+.section {
+  background-color: rgb(1, 58, 29);
+  color: aliceblue;
+}
+
+.main {
+  background-color: rgb(231, 237, 255);
+}
+
+.movie-grid ul {
+  padding: 15px;
+}
+
+.movie-grid li {
+  display: inline-block;
+  list-style-type: none;
+  word-wrap: break-word;
+  padding: 5px;
+}
+
+.movie-genres {
+  display: block;
+}
