@@ -132,9 +132,13 @@ async function init() {
     moviesSearchRequest.pageNo = 1
     moviesDataPromise = await theApp.getMoviesSearch(moviesSearchRequest)
     moviesDataResults = moviesDataPromise.results
-    if (moviesDataResults) {
+    if (moviesDataResults && moviesDataResults.length > 0) {
       moviesNode.innerHTML = ''
       _buildDOMwithResults(moviesDataResults)
+    } else {
+      moviesSearchRequest.query = "";
+      moviesSearchRequest.pageNo = 1
+      alert('no results')
     }
   }
 
