@@ -79,13 +79,17 @@ async function init() {
         movieLiNode.setAttribute('data-movie-id', movie.id?.toString() || '')
         movieLiNode.setAttribute('data-movie-link', 'true')
         movieLiNode.innerHTML =
-          `<img loading='lazy' width="500" height="750" src="${configObj}w500/${movie.poster_path}" />
-           <h1 class='movie-title'>${movie.title}<span class='movie-date'>(${_getYear(
+          `<div class="movie-column">
+          <img class="responsive" loading="lazy" width="500" height="750" src="${configObj}w500/${movie.poster_path}" />
+           </div>
+           <div class="movie-column">
+           <h1 class="movie-title">${movie.title}<span class="movie-date">(${_getYear(
             movie.release_date
-          )})</span><span class='movie-more'>...more</span></h1><span class='movie-genres'>${_getGenreTitle(
+          )})</span><span class="movie-more">...more</span></h1><span class="movie-genres">${_getGenreTitle(
             movie.genre_ids,
             genres
-          )}</span><p>${movie.overview}</p><p class='movie-stars'>${_getStars(movie.vote_average)}</p>` || 'No Info'
+          )}</span><p>${movie.overview}</p><p class="movie-stars">${_getStars(movie.vote_average)}</p></div>` ||
+          'No Info'
         moviesNode.appendChild(movieLiNode)
       }
     }
