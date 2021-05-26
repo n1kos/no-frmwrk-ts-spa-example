@@ -33,30 +33,45 @@ async function init() {
   const configObj: string = configObjPromise.images.base_url
   console.log('baseUrl', configObj)
 
-  const genres: Genre[] = await (await theApp.getGenres(theApiToken)).genres
+  const genres: Genre[] = (await theApp.getGenres(theApiToken)).genres
 
-  function updatePageRequest(_moviesNowCurentRequest: MoviesNowRequest): void {
+  function _updatePageRequest(_moviesNowCurentRequest: MoviesNowRequest): void {
     _moviesNowCurentRequest.pageNo++
   }
 
-  function getGenreTitle(_ids: number[] = [], _genres: Genre[]): string {
+  function _getGenreTitle(_ids: number[] = [], _genres: Genre[]): string {
     return _ids
       .map((theId: number) => genres.filter((element: Genre) => element.id == theId))
       .map((element: Genre[]) => element[0].name)
       .toString()
   }
 
-  async function getMoreMovies() {
+  function _getStars(rating: number = 0) {
+    // rating is on 1-10 scale, we are using a 1 - 5 and round to nearest half
+    rating = Math.round((rating / 2) * 2) / 2
+    const output = []
+    // Append all the filled whole stars
+    for (var i = rating; i >= 1; i--) output.push('<span class="star on" aria-hidden="true"></span>')
+    // If there is a half a star, append it
+    if (i == 0.5) output.push('<span class="star half" aria-hidden="true"></span>')
+    // Fill the empty stars
+    for (let i = 5 - rating; i >= 1; i--) output.push('<span class="star off" aria-hidden="true"></span>')
+    return output.join('')
+  }
+
+  async function _getMoreMovies() {
     moviesNowPromise = await theApp.getMoviesNow(moviesNowCurentRequest)
     moviesNow = moviesNowPromise.results
     if (moviesNow) {
-      updatePageRequest(moviesNowCurentRequest)
+      _updatePageRequest(moviesNowCurentRequest)
       for (const movie of moviesNow) {
         const movieLiNode: HTMLLIElement = document.createElement('li')
-        movieLiNode.innerText =
-          `${movie.title}, ${movie.release_date}, ${movie.original_title}, ${movie.vote_average}, ${
+        movieLiNode.innerHTML =
+          ` <h1 class='movie-title'>${movie.title}</h1><span class='movie-date'>Release date:${
+            movie.release_date
+          }</span><span class='movie-genres'>${_getGenreTitle(movie.genre_ids, genres)}</span><p>${
             movie.overview
-          }, ${getGenreTitle(movie.genre_ids, genres)}` || 'No Title'
+          }</p><p class='movie-stars'>${_getStars(movie.vote_average)}</p>` || 'No Info'
         moviesNode.appendChild(movieLiNode)
       }
     }
@@ -68,7 +83,7 @@ async function init() {
        */
       if (entry.intersectionRatio > 0) {
         setTimeout(() => {
-          getMoreMovies()
+          _getMoreMovies()
         }, 1000)
       }
     })

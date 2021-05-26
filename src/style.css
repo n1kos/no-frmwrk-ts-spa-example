@@ -14,11 +14,12 @@ body {
 }
 
 .section {
-  background-color: burlywood;
+  background-color: rgb(1, 58, 29);
+  color: aliceblue;
 }
 
 .main {
-  background-color: chartreuse;
+  background-color: rgb(231, 237, 255);
 }
 
 .movie-grid ul {
@@ -33,4 +34,31 @@ body {
   list-style-type: none;
   word-wrap: break-word;
   padding: 5px;
+}
+
+.movie-genres {
+  display: block;
+}
+
+.star {
+  font-size: x-large;
+  display: inline-block;
+  color: gray;
+}
+.star:last-child {
+  margin-right: 0;
+}
+.star:before {
+  content: '\2605';
+}
+.star.on {
+  color: rgb(209, 183, 36);
+}
+.star.half:after {
+  content: '\2605';
+  color: rgb(209, 183, 36);
+  position: absolute;
+  margin-left: -20px;
+  width: 10px;
+  overflow: hidden;
 }
