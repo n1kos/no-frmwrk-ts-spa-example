@@ -1,6 +1,11 @@
-import { APIToken } from './shared/model/model-common'
-import { ConfigurationResponse, GenreResponse, MovieDetailsResponse, NowPlayingResponse } from './shared/model/model-results'
-import { MovieDetailsRequest, MoviesNowRequest } from './shared/model/model-requests'
+import { APIToken, MovieDetailsMoreCollection } from './shared/model/model-common'
+import {
+  ConfigurationResponse,
+  GenreResponse,
+  MovieDetailsResponse,
+  NowPlayingResponse,
+} from './shared/model/model-results'
+import { MoviesMoreRequest, MoviesNowRequest } from './shared/model/model-requests'
 import { ApiRequestService as ApiService } from './shared/services/request-service'
 
 export class App {
@@ -22,13 +27,22 @@ export class App {
     return await this.apiService.getMoviesNow(params)
   }
 
-  public async getMovieDetails(params: {
-    apiKey: APIToken
-    movieId: MovieDetailsRequest
-  }): Promise<MovieDetailsResponse> {
+  public async getMovieDetails(params: MoviesMoreRequest): Promise<MovieDetailsResponse> {
     return await this.apiService.getMovieDetails(params)
   }
 
+  public async getMovieMore(params: MoviesMoreRequest): Promise<MovieDetailsMoreCollection> {
+    const [_reviews, _similar, _videos] = await Promise.all([
+      this.apiService.getMovieDetailsReviews(params),
+      this.apiService.getMovieDetailsSimilar(params),
+      this.apiService.getMovieDetailsVideos(params),
+    ])
+    return {
+      reviews: _reviews,
+      similar: _similar,
+      videos: _videos,
+    }
+  }
   // public async loadDOM(): Promise<void> {
   //   const DOMData = await this.getMoviesNow({ apiKey: '1d342f36ce9ad0f75afa27e2eb307f5805f100f2' })
   //   const appEntryPoint: HTMLElement = document.getElementById('app') as HTMLElement

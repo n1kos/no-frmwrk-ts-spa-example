@@ -1,3 +1,4 @@
+import { MovieDetailsReviewsResponse, MovieDetailsSimilarResponse, MovieDetailsVideosResponse } from './model-results';
 export interface APIToken {
   apiKey: string
 }
@@ -27,6 +28,19 @@ export interface Language {
 }
 
 export type Status = 'Rumored' | 'Planned' | 'In Production' | 'Post' | 'Production' | 'Released' | 'Canceled'
+
+export interface PageInfo {
+  page?: number
+  total_pages?: number
+  total_results?: number
+}
+
+export interface AuthorDetails {
+  name?: string
+  username?: string
+  avatar_path?: string | null
+  rating?: number | null
+}
 
 export interface Movie {
   poster_path?: string | null
@@ -73,4 +87,10 @@ export interface MovieDetails extends Movie {
   runtime?: number | null
   status?: Status
   tagline?: string | null
+}
+
+export interface MovieDetailsMoreCollection {
+  reviews: MovieDetailsReviewsResponse,
+  similar: MovieDetailsSimilarResponse,
+  videos: MovieDetailsVideosResponse
 }

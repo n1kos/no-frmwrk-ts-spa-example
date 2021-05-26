@@ -50,3 +50,11 @@ body {
   font-size: smaller;
   font-style: italic;
 }
+
+.movie-more {
+  cursor: pointer;
+  margin-left: 10px;
+  color: rgb(31, 13, 133);
+  text-decoration: underline;
+  font-size: medium;
+}

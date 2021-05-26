@@ -2,9 +2,8 @@ import 'regenerator-runtime/runtime'
 import { App } from './app'
 import { ConfigurationResponse, NowPlayingResponse } from '@/shared/model/model-results'
 import { APIToken, Movie } from '@/shared/model/model-common'
-import { MoviesNowRequest } from './shared/model/model-requests'
+import { MoviesMoreRequest, MoviesNowRequest } from './shared/model/model-requests'
 import { Genre } from './shared/model/model-common'
-import { GenreResponse } from './shared/model/model-results'
 
 async function init() {
   // loadDOM()
@@ -16,6 +15,11 @@ async function init() {
   const moviesNowCurentRequest: MoviesNowRequest = {
     apiKey: theApiToken.apiKey,
     pageNo: 1,
+  }
+
+  const movieMoreDetails: MoviesMoreRequest = {
+    apiKey: theApiToken.apiKey,
+    movieId: '',
   }
   // const appNode: HTMLElement = document.getElementById('container') as HTMLElement
   const moviesParentNode: HTMLElement = document.getElementById('movies') as HTMLElement
@@ -71,16 +75,31 @@ async function init() {
       _updatePageRequest(moviesNowCurentRequest)
       for (const movie of moviesNow) {
         const movieLiNode: HTMLLIElement = document.createElement('li')
+        movieLiNode.setAttribute('data-movie-id', movie.id?.toString() || '')
+        movieLiNode.setAttribute('data-movie-link', 'true')
         movieLiNode.innerHTML =
           ` <h1 class='movie-title'>${movie.title}<span class='movie-date'>(${_getYear(
             movie.release_date
-          )})</span></h1><span class='movie-genres'>${_getGenreTitle(movie.genre_ids, genres)}</span><p>${
-            movie.overview
-          }</p><p class='movie-stars'>${_getStars(movie.vote_average)}</p>` || 'No Info'
+          )})</span><span class='movie-more'>...more</span></h1><span class='movie-genres'>${_getGenreTitle(
+            movie.genre_ids,
+            genres
+          )}</span><p>${movie.overview}</p><p class='movie-stars'>${_getStars(movie.vote_average)}</p>` || 'No Info'
         moviesNode.appendChild(movieLiNode)
       }
     }
   }
+
+  async function _showMoreDetails(evt: Event) {
+    const _el = evt.target as HTMLElement
+    const _desired = _el.closest('[data-movie-link]')
+    const _movieId = _desired?.getAttribute('data-movie-id')
+    movieMoreDetails.movieId = _movieId || ''
+    const _movieData = await theApp.getMovieMore(movieMoreDetails)
+    console.log(_movieData)
+    return _movieData
+  }
+  moviesNode.addEventListener('click', _showMoreDetails)
+
   observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       /**
