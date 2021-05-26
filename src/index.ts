@@ -58,8 +58,8 @@ async function init() {
     }
   }
 
-  const _updatePageRequest = (_moviesNowCurentRequest: MoviesNowRequest): void => {
-    _moviesNowCurentRequest.pageNo++
+  const _updatePageRequest = (_moviesCurrentRequest: MoviesNowRequest | MoviesSearchRequest): void => {
+    _moviesCurrentRequest.pageNo++
   }
 
   const _getGenreTitle = (_ids: number[] = [], _genres: Genre[]): string => {
@@ -89,7 +89,12 @@ async function init() {
 
   const _buildDOMwithResults = (_movies: Movie[]): void => {
     document.dispatchEvent(new CustomEvent('movieDataLoaded', { detail: moviesNow }))
-    _updatePageRequest(moviesNowCurentRequest)
+    if (moviesSearchRequest.query == '') {
+      _updatePageRequest(moviesNowCurentRequest)
+    } else {
+      _updatePageRequest(moviesSearchRequest)
+    }
+
     for (const movie of _movies) {
       const movieLiNode: HTMLLIElement = document.createElement('li')
       movieLiNode.setAttribute('data-movie-id', movie.id?.toString() || '')
@@ -117,6 +122,14 @@ async function init() {
     }
   }
 
+  const _getMoreSearchedMovies = async () => {
+    moviesNowPromise = await theApp.getMoviesSearch(moviesSearchRequest)
+    moviesNow = moviesNowPromise.results
+    if (moviesNow) {
+      _buildDOMwithResults(moviesNow)
+    }
+  }
+
   const _showMoreDetails = async (evt: Event) => {
     const _el = evt.target as HTMLElement
     const _desired = _el.closest('[data-movie-link]')
@@ -134,6 +147,7 @@ async function init() {
 
   const _getSearchedMovies = async (searchString: string) => {
     moviesSearchRequest.query = searchString
+    moviesSearchRequest.pageNo = 1
     moviesNowPromise = await theApp.getMoviesSearch(moviesSearchRequest)
     moviesNow = moviesNowPromise.results
     if (moviesNow) {
@@ -159,7 +173,12 @@ async function init() {
        */
       if (entry.intersectionRatio > 0) {
         setTimeout(() => {
-          _getMoreMovies()
+          console.log(searchBtnNode.value)
+          if (moviesSearchRequest.query == '') {
+            _getMoreMovies()
+          } else {
+            _getMoreSearchedMovies()
+          }
         }, 1000)
       }
     })
