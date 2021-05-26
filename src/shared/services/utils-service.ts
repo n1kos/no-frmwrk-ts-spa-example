@@ -1,6 +1,5 @@
 import { MoviesNowRequest, MoviesSearchRequest } from '@/shared/model/model-requests'
 import { Genre } from '@/shared/model/model-common'
-
 export class Utils {
   public debounce = (func: Function, wait: number) => {
     let timeout: number
@@ -25,10 +24,10 @@ export class Utils {
       .toString()
   }
 
-  public _getStars = (rating: number = 0) => {
+  public _getStars = (rating: number = 0): string => {
     // rating is on 1-10 scale, we are using a 1 - 5 and round to nearest half
     rating = Math.round((rating / 2) * 2) / 2
-    const output = []
+    const output: string[] = []
     // Append all the filled whole stars
     for (var i = rating; i >= 1; i--) output.push('<span class="star on" aria-hidden="true"></span>')
     // If there is a half a star, append it
@@ -39,7 +38,7 @@ export class Utils {
   }
 
   public _getYear = (_date: Date = new Date(1, 1, 1)): number => {
-    const _dateRelease = new Date(_date.toString()).getFullYear()
+    const _dateRelease: number = new Date(_date.toString()).getFullYear()
     return _dateRelease == 1 ? 0 : _dateRelease
   }
 }

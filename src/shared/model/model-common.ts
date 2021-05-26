@@ -1,4 +1,4 @@
-import { MovieDetailsReviewsResponse, MovieDetailsSimilarResponse, MovieDetailsVideosResponse } from './model-results';
+import { MovieDetailsReviewsResponse, MovieDetailsSimilarResponse, MovieDetailsVideosResponse } from './model-results'
 export interface APIToken {
   apiKey: string
 }
@@ -41,7 +41,6 @@ export interface AuthorDetails {
   avatar_path?: string | null
   rating?: number | null
 }
-
 export interface Movie {
   poster_path?: string | null
   adult?: boolean
@@ -72,7 +71,6 @@ export interface LatestMovie extends Movie {
   status?: string
   tagline?: string
 }
-
 export interface MovieDetails extends Movie {
   belongs_to_collection?: null | object
   budget?: number
@@ -88,9 +86,8 @@ export interface MovieDetails extends Movie {
   status?: Status
   tagline?: string | null
 }
-
 export interface MovieDetailsMoreCollection {
-  reviews: MovieDetailsReviewsResponse,
-  similar: MovieDetailsSimilarResponse,
+  reviews: MovieDetailsReviewsResponse
+  similar: MovieDetailsSimilarResponse
   videos: MovieDetailsVideosResponse
 }

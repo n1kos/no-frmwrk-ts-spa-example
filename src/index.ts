@@ -1,19 +1,20 @@
 import 'regenerator-runtime/runtime'
 import { App } from './app'
-import { ConfigurationResponse, NowPlayingResponse } from '@/shared/model/model-results'
-import { APIToken, Movie, Genre } from '@/shared/model/model-common'
-import { MoviesMoreRequest, MoviesNowRequest, MoviesSearchRequest } from '@/shared/model/model-requests'
+import { ConfigurationResponse, MoviesSearchResponse, NowPlayingResponse } from './shared/model/model-results'
+import { APIToken, Movie, Genre } from './shared/model/model-common'
+import { MoviesMoreRequest, MoviesNowRequest, MoviesSearchRequest } from './shared/model/model-requests'
 import { Utils } from './shared/services/utils-service'
 
 async function init() {
   // loadDOM()
   const theApp = new App()
   const utils = new Utils()
-  
+
   const theApiToken: APIToken = {
     apiKey: 'bc50218d91157b1ba4f142ef7baaa6a0',
   }
 
+  // define query objects
   const moviesNowCurentRequest: MoviesNowRequest = {
     apiKey: theApiToken.apiKey,
     pageNo: 1,
@@ -30,14 +31,17 @@ async function init() {
     movieId: '',
   }
 
+  // get references to dom nodes
   const moviesParentNode: HTMLElement = document.getElementById('movies') as HTMLElement
   const searchBtnNode: HTMLInputElement = document.getElementById('moviesSearch') as HTMLInputElement
   const observerNode: HTMLElement = document.getElementById('infinite-scroll-trigger') as HTMLElement
   const moviesNode: HTMLUListElement = document.createElement('ul')
   let observer: IntersectionObserver
 
-  let moviesNowPromise: NowPlayingResponse
-  let moviesNow: Movie[] | undefined
+  let moviesDataPromise: NowPlayingResponse | MoviesSearchResponse
+  let moviesDataResults: Movie[] | undefined
+
+  // the dynamic part of the page, append it to it's parent element
   moviesParentNode.appendChild(moviesNode)
 
   /**
@@ -46,16 +50,25 @@ async function init() {
   const configObjPromise: ConfigurationResponse = await theApp.getConfig(theApiToken)
   const configObj: string = configObjPromise.images.base_url
 
+  /**
+   * get the genres to lookup
+   */
   const genres: Genre[] = (await theApp.getGenres(theApiToken)).genres
 
+  /**
+   *
+   * @param _movies the result list from the queries
+   * this builds the DOM initially and everytime there is a new search
+   */
   const _buildDOMwithResults = (_movies: Movie[]): void => {
-    document.dispatchEvent(new CustomEvent('movieDataLoaded', { detail: moviesNow }))
+    // document.dispatchEvent(new CustomEvent('movieDataLoaded', { detail: moviesDataResults }))
     if (moviesSearchRequest.query == '') {
       utils._updatePageRequest(moviesNowCurentRequest)
     } else {
       utils._updatePageRequest(moviesSearchRequest)
     }
 
+    // could use a template - #TODO
     for (const movie of _movies) {
       const movieLiNode: HTMLLIElement = document.createElement('li')
       movieLiNode.setAttribute('data-movie-id', movie.id?.toString() || '')
@@ -70,27 +83,35 @@ async function init() {
         )})</span><span class="movie-more">...more</span></h1><span class="movie-genres">${utils._getGenreTitle(
           movie.genre_ids,
           genres
-        )}</span><p>${movie.overview}</p><p class="movie-stars">${utils._getStars(movie.vote_average)}</p></div>` || 'No Info'
+        )}</span><p>${movie.overview}</p><p class="movie-stars">${utils._getStars(movie.vote_average)}</p></div>` ||
+        'No Info'
       moviesNode.appendChild(movieLiNode)
     }
   }
 
   const _getMoreMovies = async () => {
-    moviesNowPromise = await theApp.getMoviesNow(moviesNowCurentRequest)
-    moviesNow = moviesNowPromise.results
-    if (moviesNow) {
-      _buildDOMwithResults(moviesNow)
+    moviesDataPromise = await theApp.getMoviesNow(moviesNowCurentRequest)
+    moviesDataResults = moviesDataPromise.results
+    if (moviesDataResults) {
+      _buildDOMwithResults(moviesDataResults)
     }
   }
 
   const _getMoreSearchedMovies = async () => {
-    moviesNowPromise = await theApp.getMoviesSearch(moviesSearchRequest)
-    moviesNow = moviesNowPromise.results
-    if (moviesNow) {
-      _buildDOMwithResults(moviesNow)
+    moviesDataPromise = await theApp.getMoviesSearch(moviesSearchRequest)
+    moviesDataResults = moviesDataPromise.results
+    if (moviesDataResults) {
+      _buildDOMwithResults(moviesDataResults)
     }
   }
-
+  /**
+   *
+   * @param evt
+   * @returns the selected movie details. we will be adding a single event listener which will delegate the event
+   * instead of adding one for every movie which will have a performance penalty. as an eastern egg, you can
+   * click anywhere on the movie and get the results but this will not be indicated
+   *
+   */
   const _showMoreDetails = async (evt: Event) => {
     const _el = evt.target as HTMLElement
     const _desired = _el.closest('[data-movie-link]')
@@ -102,22 +123,25 @@ async function init() {
   }
   moviesNode.addEventListener('click', _showMoreDetails)
 
-  document.addEventListener('movieDataLoaded', ((event: CustomEvent) => {
-    console.log(event.detail)
-  }) as EventListener)
+  // document.addEventListener('movieDataLoaded', ((event: CustomEvent) => {
+  //   console.log(event.detail)
+  // }) as EventListener)
 
-  const _getSearchedMovies = async (searchString: string) => {
+  const _getSearchedMovies = async (searchString: string): Promise<void> => {
     moviesSearchRequest.query = searchString
     moviesSearchRequest.pageNo = 1
-    moviesNowPromise = await theApp.getMoviesSearch(moviesSearchRequest)
-    moviesNow = moviesNowPromise.results
-    if (moviesNow) {
+    moviesDataPromise = await theApp.getMoviesSearch(moviesSearchRequest)
+    moviesDataResults = moviesDataPromise.results
+    if (moviesDataResults) {
       moviesNode.innerHTML = ''
-      _buildDOMwithResults(moviesNow)
+      _buildDOMwithResults(moviesDataResults)
     }
   }
 
-  const _searchDebounced = utils.debounce(function (evt: Event) {
+  /**
+   * we will allow the user some time between keypresses and actually activating the search
+   */
+  const _searchDebounced = utils.debounce(function (evt: Event): void {
     // allow only searches with at least 3 chars, although this will exclude some, ie 'IT', 'ET'
     // but can mitigated by pressing enter thouggh this might be somewhat confusing.. i ll see
     if (searchBtnNode.value.match(/\w{3}/)) {
@@ -127,6 +151,9 @@ async function init() {
   }, 250)
   searchBtnNode.addEventListener('keyup', _searchDebounced)
 
+  /**
+   * use the observer native API for the infinit scrolling
+   */
   observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       /**
@@ -134,7 +161,7 @@ async function init() {
        */
       if (entry.intersectionRatio > 0) {
         setTimeout(() => {
-          console.log(searchBtnNode.value)
+          // you can either load more now playing or more searched
           if (moviesSearchRequest.query == '') {
             _getMoreMovies()
           } else {
