@@ -59,6 +59,11 @@ async function init() {
     return output.join('')
   }
 
+  function _getYear(_date: Date = new Date(1, 1, 1)): number {
+    const _dateRelease = new Date(_date.toString()).getFullYear()
+    return _dateRelease == 1 ? 0 : _dateRelease
+  }
+
   async function _getMoreMovies() {
     moviesNowPromise = await theApp.getMoviesNow(moviesNowCurentRequest)
     moviesNow = moviesNowPromise.results
@@ -67,9 +72,9 @@ async function init() {
       for (const movie of moviesNow) {
         const movieLiNode: HTMLLIElement = document.createElement('li')
         movieLiNode.innerHTML =
-          ` <h1 class='movie-title'>${movie.title}</h1><span class='movie-date'>Release date:${
+          ` <h1 class='movie-title'>${movie.title}<span class='movie-date'>(${_getYear(
             movie.release_date
-          }</span><span class='movie-genres'>${_getGenreTitle(movie.genre_ids, genres)}</span><p>${
+          )})</span></h1><span class='movie-genres'>${_getGenreTitle(movie.genre_ids, genres)}</span><p>${
             movie.overview
           }</p><p class='movie-stars'>${_getStars(movie.vote_average)}</p>` || 'No Info'
         moviesNode.appendChild(movieLiNode)

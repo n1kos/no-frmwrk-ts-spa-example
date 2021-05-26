@@ -44,3 +44,9 @@ body {
 .movie-genres {
   display: block;
 }
+
+.movie-date {
+  margin-left: 10px;
+  font-size: smaller;
+  font-style: italic;
+}
