@@ -1,6 +1,7 @@
 .loading {
   width: 150px;
   height: 70px;
+  margin: auto;
   margin-bottom: 30px;
   display: flex;
   justify-content: center;
