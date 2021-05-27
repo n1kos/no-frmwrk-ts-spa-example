@@ -37,8 +37,8 @@ export class Utils {
     return output.join('')
   }
 
-  public _getYear = (_date: Date = new Date(1, 1, 1)): number => {
-    const _dateRelease: number = new Date(_date.toString()).getFullYear()
-    return _dateRelease == 1 ? 0 : _dateRelease
+  public _getYear = (_date: Date = new Date(1, 1, 1)): string => {
+    const _dateRelease: string = new Date(_date.toString()).getFullYear().toString()
+    return _dateRelease.toUpperCase() == 'NAN' ? '-' : _dateRelease
   }
 }
