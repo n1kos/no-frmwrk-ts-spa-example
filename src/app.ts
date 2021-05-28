@@ -11,8 +11,52 @@ import { ApiRequestService as ApiService } from './shared/services/request-servi
 
 export class App {
   private apiService = new ApiService()
+  private myApiToken: APIToken
+  private moviesNowCurentRequest: MoviesNowRequest
+  private moviesSearchRequest: MoviesSearchRequest
+  private movieMoreDetails: MoviesMoreRequest
 
+  constructor(theApitoken: APIToken) {
+    this.myApiToken = theApitoken
+    this.moviesNowCurentRequest = {
+      apiKey: this.myApiToken.apiKey,
+      pageNo: 1,
+    }
+    this.moviesSearchRequest = {
+      apiKey: this.myApiToken.apiKey,
+      pageNo: 1,
+      query: '',
+    }
+    this.movieMoreDetails = {
+      apiKey: this.myApiToken.apiKey,
+      movieId: '',
+    }
+  }
+
+  public get anApiToken(): APIToken {
+    return this.myApiToken
+  }
+
+  public get moviesNowCurent(): MoviesNowRequest {
+    return this.moviesNowCurentRequest
+  }
+
+  public get moviesSearch(): MoviesSearchRequest {
+    return this.moviesSearchRequest
+  }
+
+  public get moviesMoreDetails(): MoviesMoreRequest {
+    return this.movieMoreDetails
+  }
+
+  // public set moviesMoreDetails(_theId) {
+  //   this.movieMoreDetails.movieId = _theId.movieId
+  // }
+  public setmovieMoreDetails(_id: string = '') {
+    this.movieMoreDetails.movieId = _id
+  }
   /**
+  
    *
    * @param params the provided user API token
    * @returns the configuration of the site

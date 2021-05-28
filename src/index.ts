@@ -1,40 +1,13 @@
 import 'regenerator-runtime/runtime'
 import { App } from './app'
-import {
-  ConfigurationResponse,
-  MoviesSearchResponse,
-  NowPlayingResponse,
-  MovieDetailsReviewsResponse,
-} from './shared/model/model-results'
-import { APIToken, Movie, Genre, MovieDetailsMoreCollection, ReviewsDetails } from './shared/model/model-common'
-import { MoviesMoreRequest, MoviesNowRequest, MoviesSearchRequest } from './shared/model/model-requests'
+import { ConfigurationResponse, MoviesSearchResponse, NowPlayingResponse } from './shared/model/model-results'
+import { Movie, Genre, MovieDetailsMoreCollection, ReviewsDetails } from './shared/model/model-common'
 import { Utils } from './shared/services/utils-service'
 
 async function init() {
   // loadDOM()
-  const theApp = new App()
+  const theApp = new App({ apiKey: 'bc50218d91157b1ba4f142ef7baaa6a0' })
   const utils = new Utils()
-
-  const theApiToken: APIToken = {
-    apiKey: 'bc50218d91157b1ba4f142ef7baaa6a0',
-  }
-
-  // define query objects
-  const moviesNowCurentRequest: MoviesNowRequest = {
-    apiKey: theApiToken.apiKey,
-    pageNo: 1,
-  }
-
-  const moviesSearchRequest: MoviesSearchRequest = {
-    apiKey: theApiToken.apiKey,
-    pageNo: 1,
-    query: '',
-  }
-
-  const movieMoreDetails: MoviesMoreRequest = {
-    apiKey: theApiToken.apiKey,
-    movieId: '',
-  }
 
   // get references to dom nodes
   const moviesParentNode: HTMLElement = document.getElementById('movies') as HTMLElement
@@ -53,13 +26,13 @@ async function init() {
   /**
    ** get the configuration data which might be needed. #todo: store in localstorage, as suggested
    */
-  const configObjPromise: ConfigurationResponse = await theApp.getConfig(theApiToken)
+  const configObjPromise: ConfigurationResponse = await theApp.getConfig(theApp.anApiToken)
   const configObj: string = configObjPromise.images.base_url
 
   /**
    * get the genres to lookup
    */
-  const genres: Genre[] = (await theApp.getGenres(theApiToken)).genres
+  const genres: Genre[] = (await theApp.getGenres(theApp.anApiToken)).genres
 
   /**
    *
@@ -68,10 +41,10 @@ async function init() {
    */
   const _buildDOMwithResults = (_movies: Movie[]): void => {
     // document.dispatchEvent(new CustomEvent('movieDataLoaded', { detail: moviesDataResults }))
-    if (moviesSearchRequest.query == '') {
-      utils._updatePageRequest(moviesNowCurentRequest)
+    if (theApp.moviesSearch.query == '') {
+      utils._updatePageRequest(theApp.moviesNowCurent)
     } else {
-      utils._updatePageRequest(moviesSearchRequest)
+      utils._updatePageRequest(theApp.moviesSearch)
     }
 
     // could use a template - #TODO
@@ -109,7 +82,7 @@ async function init() {
   }
 
   const _getMoreMovies = async () => {
-    moviesDataPromise = await theApp.getMoviesNow(moviesNowCurentRequest)
+    moviesDataPromise = await theApp.getMoviesNow(theApp.moviesNowCurent)
     moviesDataResults = moviesDataPromise.results
     if (moviesDataResults) {
       _buildDOMwithResults(moviesDataResults)
@@ -117,7 +90,7 @@ async function init() {
   }
 
   const _getMoreSearchedMovies = async () => {
-    moviesDataPromise = await theApp.getMoviesSearch(moviesSearchRequest)
+    moviesDataPromise = await theApp.getMoviesSearch(theApp.moviesSearch)
     moviesDataResults = moviesDataPromise.results
     if (moviesDataResults) {
       _buildDOMwithResults(moviesDataResults)
@@ -176,13 +149,13 @@ async function init() {
     const _desired: HTMLElement = _el.closest('[data-movie-link]') as HTMLElement
     const _movieId = _desired?.getAttribute('data-movie-id')
     let _movieData: MovieDetailsMoreCollection
-    movieMoreDetails.movieId = _movieId || ''
+    theApp.setmovieMoreDetails(_movieId || '')
     if (_desired?.classList.contains('show-more')) {
       _desired.classList.remove('show-more')
       return null
     } else {
       if (_desired.querySelector('.with-more-info')?.innerHTML == '') {
-        _movieData = await theApp.getMovieMore(movieMoreDetails)
+        _movieData = await theApp.getMovieMore(theApp.moviesMoreDetails)
         console.log(_movieData)
         _addMovieMoreContent(_movieData, _desired)
       }
@@ -196,16 +169,16 @@ async function init() {
   // }) as EventListener)
 
   const _getSearchedMovies = async (searchString: string): Promise<void> => {
-    moviesSearchRequest.query = searchString
-    moviesSearchRequest.pageNo = 1
-    moviesDataPromise = await theApp.getMoviesSearch(moviesSearchRequest)
+    theApp.moviesSearch.query = searchString
+    theApp.moviesSearch.pageNo = 1
+    moviesDataPromise = await theApp.getMoviesSearch(theApp.moviesSearch)
     moviesDataResults = moviesDataPromise.results
     if (moviesDataResults && moviesDataResults.length > 0) {
       moviesNode.innerHTML = ''
       _buildDOMwithResults(moviesDataResults)
     } else {
-      moviesSearchRequest.query = ''
-      moviesSearchRequest.pageNo = 1
+      theApp.moviesSearch.query = ''
+      theApp.moviesSearch.pageNo = 1
       alert('no results')
     }
   }
@@ -227,10 +200,10 @@ async function init() {
    * need to have a way to go back to original results
    */
   moviesNowhBtnNode.addEventListener('click', () => {
-    if (moviesSearchRequest.query !== '') {
-      moviesSearchRequest.query = ''
-      moviesSearchRequest.pageNo = 1
-      moviesNowCurentRequest.pageNo = 1
+    if (theApp.moviesSearch.query !== '') {
+      theApp.moviesSearch.query = ''
+      theApp.moviesSearch.pageNo = 1
+      theApp.moviesNowCurent.pageNo = 1
       moviesNode.innerHTML = ''
     }
   })
@@ -245,7 +218,7 @@ async function init() {
       if (entry.intersectionRatio > 0) {
         setTimeout(() => {
           // you can either load more now playing or more searched
-          if (moviesSearchRequest.query == '') {
+          if (theApp.moviesSearch.query == '') {
             _getMoreMovies()
           } else {
             _getMoreSearchedMovies()
