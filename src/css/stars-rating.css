@@ -1,7 +1,7 @@
 .star {
-  font-size: x-large;
+  font-size: xx-large;
   display: inline-block;
-  color: gray;
+  color: var(--rating-stars-off-colour);
 }
 .star:last-child {
   margin-right: 0;
@@ -10,13 +10,13 @@
   content: '\2605';
 }
 .star.on {
-  color: rgb(209, 183, 36);
+  color: var(--rating-stars-on-colour);
 }
 .star.half:after {
   content: '\2605';
-  color: rgb(209, 183, 36);
+  color: var(--rating-stars-on-colour);
   position: absolute;
-  margin-left: -20px;
-  width: 10px;
+  margin-left: -27px;
+  width: 14px;
   overflow: hidden;
 }

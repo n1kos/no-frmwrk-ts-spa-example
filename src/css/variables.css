@@ -1,0 +1,12 @@
+:root {
+  --main-bg-colour: rgb(29, 28, 28);
+  --main-theme-colour: rgb(94, 24, 38);
+  --main-theme-highlight-colour: rgb(160, 23, 23);
+  --main-txt-bg-colour: rgb(231, 237, 255);
+  --main-txt-colour: rgba(0, 0, 0, 0.5);
+  --img-border-radius: 25px;
+  --box-shadow: 22px 26px 23px 3px rgba(0, 0, 0, 0.75);
+  --txt-active-colour: rgb(172, 17, 94);
+  --rating-stars-on-colour: rgb(255, 218, 6);
+  --rating-stars-off-colour: rgb(129, 129, 129);
+}
