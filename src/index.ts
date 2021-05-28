@@ -74,22 +74,30 @@ async function init() {
       const movieLiNode: HTMLLIElement = document.createElement('li')
       movieLiNode.setAttribute('data-movie-id', movie.id?.toString() || '')
       movieLiNode.setAttribute('data-movie-link', 'true')
-      movieLiNode.innerHTML =
-        `<div class="movie-column with-poster">
-          <img class="movie-poster responsive" loading="lazy" width="500" height="750" src="${configObj}w500/${
-          movie.poster_path
-        }" />
-        </div>
-        <div class="movie-column with-info">
-           <h1 class="movie-title">${movie.title}<span class="movie-date">(${utils._getYear(
-          movie.release_date
-        )})</span><span class="movie-more">...more</span></h1><span class="movie-genres">${utils._getGenreTitle(
-          movie.genre_ids,
-          genres
-        )}</span><p>${movie.overview}</p><p class="movie-stars">${utils._getStars(movie.vote_average)}</p></div>
-        <div class="movie-column with-more-info"></div>
-        ` || 'No Info'
       moviesNode.appendChild(movieLiNode)
+
+      const fragment: DocumentFragment = document.createDocumentFragment()
+      const childDiv1: HTMLElement = document.createElement('div')
+      const childDiv2: HTMLElement = document.createElement('div')
+      const childDiv3: HTMLElement = document.createElement('div')
+
+      childDiv1.setAttribute('class', 'movie-column with-poster')
+      childDiv1.innerHTML = `<img class="movie-poster responsive" loading="lazy" width="500" height="750" src="${configObj}w500/${movie.poster_path}"/>`
+      fragment.appendChild(childDiv1)
+
+      childDiv2.setAttribute('class', 'movie-column with-info')
+      childDiv2.innerHTML = `<h1 class="movie-title">${movie.title}<span class="movie-date">(${utils._getYear(
+        movie.release_date
+      )})</span><span class="movie-more">...more</span></h1><span class="movie-genres">${utils._getGenreTitle(
+        movie.genre_ids,
+        genres
+      )}</span><p>${movie.overview}</p><p class="movie-stars">${utils._getStars(movie.vote_average)}</p>`
+      fragment.appendChild(childDiv2)
+
+      childDiv3.setAttribute('class', 'movie-column with-more-info')
+      fragment.appendChild(childDiv3)
+
+      movieLiNode.appendChild(fragment)
     }
   }
 
@@ -109,15 +117,36 @@ async function init() {
     }
   }
 
-  const _addMovieMoreContent = (_data: MovieDetailsMoreCollection): string => {
+  const _addMovieMoreContent = (_data: MovieDetailsMoreCollection, _desired: HTMLElement): void => {
     let _innerHTML = ''
+    const fragment: DocumentFragment = document.createDocumentFragment()
+    const childDiv: HTMLElement = document.createElement('div')
     const { reviews, similar, videos } = _data
+
+    // childDiv.innerHTML = _addMovieMoreContent(_data)
+    // _desired.querySelector('.with-more-info').innerHTML = _addMovieMoreContent(_movieData)
+
     if (videos.results && videos.results.length > 0) {
       for (const video of videos.results) {
         _innerHTML += `<iframe width="420" height="315" src="https://www.${video.site}.com/embed/${video.key}"></iframe>`
       }
     }
-    return _innerHTML
+    if (reviews.results && reviews.results.length > 0) {
+      _innerHTML += '<h1>Reviews</h1>'
+      for (const review of reviews.results) {
+        _innerHTML += `<h3>from ${review.author} </h3><p>${review.content}</p>`
+      }
+    }
+    if (similar.results && similar.results.length > 0) {
+      _innerHTML += '<h1>Similar movies</h1>'
+      for (const simil of similar.results) {
+        _innerHTML += `<h3>from ${simil.title} </h3>`
+      }
+    }
+
+    childDiv.innerHTML = _innerHTML
+    fragment.appendChild(childDiv)
+    _desired?.querySelector('.with-more-info')?.appendChild(fragment)
   }
   /**
    *
@@ -127,21 +156,22 @@ async function init() {
    * click anywhere on the movie and get the results but this will not be indicated
    *
    */
-  const _showMoreDetails = async (evt: Event): Promise<MovieDetailsMoreCollection | null> => {
+  const _showMoreDetails = async (evt: Event): Promise<void | null> => {
     const _el = evt.target as HTMLElement
-    const _desired = _el.closest('[data-movie-link]')
+    const _desired: HTMLElement = _el.closest('[data-movie-link]') as HTMLElement
     const _movieId = _desired?.getAttribute('data-movie-id')
+    let _movieData: MovieDetailsMoreCollection
     movieMoreDetails.movieId = _movieId || ''
     if (_desired?.classList.contains('show-more')) {
       _desired.classList.remove('show-more')
       return null
     } else {
-      const _movieData = await theApp.getMovieMore(movieMoreDetails)
+      if (_desired.querySelector('.with-more-info')?.innerHTML == '') {
+        _movieData = await theApp.getMovieMore(movieMoreDetails)
+        console.log(_movieData)
+        _addMovieMoreContent(_movieData, _desired)
+      }
       _desired?.classList.toggle('show-more')
-      //@ts-expect-error
-      _desired.querySelector('.with-more-info').innerHTML = _addMovieMoreContent(_movieData)
-      console.log(_movieData)
-      return _movieData
     }
   }
   moviesNode.addEventListener('click', _showMoreDetails)
