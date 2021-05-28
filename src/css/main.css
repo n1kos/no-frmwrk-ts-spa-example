@@ -9,6 +9,7 @@
 body {
   background-color: var(--main-bg-colour);
   font-size: 1.2rem;
+  font-family: 'Roboto Condensed', sans-serif;
 }
 
 img {
@@ -146,6 +147,11 @@ a.override-link {
   display: block;
 }
 
+.movie-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 2.2rem;
+}
+
 .movie-date {
   margin-left: 10px;
   font-size: smaller;
@@ -164,6 +170,12 @@ a.override-link {
   .movie-grid li div:first-child {
     flex-grow: unset;
     width: auto;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .section {
+    grid-template-columns: unset;
   }
 }
 

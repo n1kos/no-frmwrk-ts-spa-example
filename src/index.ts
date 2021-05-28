@@ -91,7 +91,7 @@ async function init() {
       fragment.appendChild(childDiv1)
 
       childDiv2.setAttribute('class', 'movie-column with-info')
-      childDiv2.innerHTML = `<h1 class="movie-title"><a class="override-link" href="https://www.themoviedb.org/movie/${
+      childDiv2.innerHTML = `<h1 class="movie-title"><a class="override-link" target="blank" href="https://www.themoviedb.org/movie/${
         movie.id
       }">${movie.title?.trim()}</a><span class="movie-date">(${utils._getYear(
         movie.release_date
@@ -154,7 +154,7 @@ async function init() {
       _innerHTML += '<div>'
       _innerHTML += '<h1>Similar movies</h1>'
       for (const simil of similar.results) {
-        _innerHTML += `<h3><a href="https://www.themoviedb.org/movie/${simil.id}"> ${simil.title}</a> </h3>`
+        _innerHTML += `<h3><a target="_blank" href="https://www.themoviedb.org/movie/${simil.id}"> ${simil.title}</a> </h3>`
       }
       _innerHTML += '</div>'
     }
