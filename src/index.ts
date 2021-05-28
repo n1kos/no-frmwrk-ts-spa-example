@@ -1,7 +1,7 @@
 import 'regenerator-runtime/runtime'
 import { App } from './app'
 import { ConfigurationResponse, MoviesSearchResponse, NowPlayingResponse } from './shared/model/model-results'
-import { APIToken, Movie, Genre } from './shared/model/model-common'
+import { APIToken, Movie, Genre, MovieDetailsMoreCollection } from './shared/model/model-common'
 import { MoviesMoreRequest, MoviesNowRequest, MoviesSearchRequest } from './shared/model/model-requests'
 import { Utils } from './shared/services/utils-service'
 
@@ -77,15 +77,16 @@ async function init() {
       movieLiNode.innerHTML =
         `<div class="movie-column">
           <img class="responsive" loading="lazy" width="500" height="750" src="${configObj}w500/${movie.poster_path}" />
-           </div>
-           <div class="movie-column">
+        </div>
+        <div class="movie-column">
            <h1 class="movie-title">${movie.title}<span class="movie-date">(${utils._getYear(
           movie.release_date
         )})</span><span class="movie-more">...more</span></h1><span class="movie-genres">${utils._getGenreTitle(
           movie.genre_ids,
           genres
-        )}</span><p>${movie.overview}</p><p class="movie-stars">${utils._getStars(movie.vote_average)}</p></div>` ||
-        'No Info'
+        )}</span><p>${movie.overview}</p><p class="movie-stars">${utils._getStars(movie.vote_average)}</p></div>
+        <div class="movie-column"></div>
+        ` || 'No Info'
       moviesNode.appendChild(movieLiNode)
     }
   }
@@ -105,6 +106,17 @@ async function init() {
       _buildDOMwithResults(moviesDataResults)
     }
   }
+
+  const _addMovieMoreContent = (_data: MovieDetailsMoreCollection): string => {
+    let _innerHTML = ''
+    const { reviews, similar, videos } = _data
+    if (videos.results && videos.results.length > 0) {
+      for (const video of videos.results) {
+        _innerHTML += `<iframe width="420" height="315" src="https://www.${video.site}.com/embed/${video.key}"></iframe>`
+      }
+    }
+    return _innerHTML
+  }
   /**
    *
    * @param evt
@@ -113,14 +125,23 @@ async function init() {
    * click anywhere on the movie and get the results but this will not be indicated
    *
    */
-  const _showMoreDetails = async (evt: Event) => {
+  const _showMoreDetails = async (evt: Event): Promise<MovieDetailsMoreCollection | null> => {
     const _el = evt.target as HTMLElement
     const _desired = _el.closest('[data-movie-link]')
     const _movieId = _desired?.getAttribute('data-movie-id')
     movieMoreDetails.movieId = _movieId || ''
-    const _movieData = await theApp.getMovieMore(movieMoreDetails)
-    console.log(_movieData)
-    return _movieData
+    if (_desired?.classList.contains('show-more')) {
+      // _desired.querySelectorAll('.movie-column')[2].innerHTML = ''
+      _desired.classList.remove('show-more')
+      return null
+    } else {
+      const _movieData = await theApp.getMovieMore(movieMoreDetails)
+      _desired?.classList.toggle('show-more')
+      //@ts-expect-error
+      _desired.querySelectorAll('.movie-column')[2].innerHTML = _addMovieMoreContent(_movieData)
+      console.log(_movieData)
+      return _movieData
+    }
   }
   moviesNode.addEventListener('click', _showMoreDetails)
 
