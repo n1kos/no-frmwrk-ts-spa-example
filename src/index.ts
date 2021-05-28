@@ -1,7 +1,12 @@
 import 'regenerator-runtime/runtime'
 import { App } from './app'
-import { ConfigurationResponse, MoviesSearchResponse, NowPlayingResponse } from './shared/model/model-results'
-import { APIToken, Movie, Genre, MovieDetailsMoreCollection } from './shared/model/model-common'
+import {
+  ConfigurationResponse,
+  MoviesSearchResponse,
+  NowPlayingResponse,
+  MovieDetailsReviewsResponse,
+} from './shared/model/model-results'
+import { APIToken, Movie, Genre, MovieDetailsMoreCollection, ReviewsDetails } from './shared/model/model-common'
 import { MoviesMoreRequest, MoviesNowRequest, MoviesSearchRequest } from './shared/model/model-requests'
 import { Utils } from './shared/services/utils-service'
 
@@ -86,7 +91,9 @@ async function init() {
       fragment.appendChild(childDiv1)
 
       childDiv2.setAttribute('class', 'movie-column with-info')
-      childDiv2.innerHTML = `<h1 class="movie-title">${movie.title}<span class="movie-date">(${utils._getYear(
+      childDiv2.innerHTML = `<h1 class="movie-title"><a class="override-link" href="https://www.themoviedb.org/movie/${
+        movie.id
+      }">${movie.title?.trim()}</a><span class="movie-date">(${utils._getYear(
         movie.release_date
       )})</span><span class="movie-more">...more</span></h1><span class="movie-genres">${utils._getGenreTitle(
         movie.genre_ids,
@@ -121,6 +128,7 @@ async function init() {
     let _innerHTML = ''
     const fragment: DocumentFragment = document.createDocumentFragment()
     const childDiv: HTMLElement = document.createElement('div')
+    childDiv.setAttribute('class', 'more-info-panel')
     const { reviews, similar, videos } = _data
 
     // childDiv.innerHTML = _addMovieMoreContent(_data)
@@ -132,16 +140,23 @@ async function init() {
       }
     }
     if (reviews.results && reviews.results.length > 0) {
+      _innerHTML += '<div>'
       _innerHTML += '<h1>Reviews</h1>'
-      for (const review of reviews.results) {
+      const limitedReviews: ReviewsDetails[] = []
+      limitedReviews.push(reviews.results[0])
+      if (reviews.results[1]) limitedReviews.push(reviews.results[1])
+      for (const review of limitedReviews) {
         _innerHTML += `<h3>from ${review.author} </h3><p>${review.content}</p>`
       }
+      _innerHTML += '</div>'
     }
     if (similar.results && similar.results.length > 0) {
+      _innerHTML += '<div>'
       _innerHTML += '<h1>Similar movies</h1>'
       for (const simil of similar.results) {
-        _innerHTML += `<h3>from ${simil.title} </h3>`
+        _innerHTML += `<h3><a href="https://www.themoviedb.org/movie/${simil.id}"> ${simil.title}</a> </h3>`
       }
+      _innerHTML += '</div>'
     }
 
     childDiv.innerHTML = _innerHTML

@@ -16,6 +16,14 @@ img {
   box-shadow: var(--box-shadow);
 }
 
+a {
+  color: var(--hyperlink-txt-colour);
+}
+
+a.override-link {
+  color: var(--main-txt-colour);
+}
+
 #container {
   width: 70%;
   background: var(--main-theme-colour);
@@ -97,9 +105,28 @@ img {
   overflow: hidden;
   flex-basis: 100%;
   max-height: 0;
+}
+
+.more-info-panel {
+  color: var(--main-txt-bg-colour);
+  padding: 20px;
+  max-height: 400px;
+  overflow-y: scroll;
+  overflow-x: hidden;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+}
+.more-info-panel > iframe {
+  flex-basis: 49%;
+}
+
+.more-info-panel > div {
+  flex-basis: 100%;
+}
+
+.more-info-panel div {
+  text-align: justify;
 }
 
 /*

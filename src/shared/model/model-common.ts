@@ -41,6 +41,18 @@ export interface AuthorDetails {
   avatar_path?: string | null
   rating?: number | null
 }
+
+export interface ReviewsDetails {
+  author?: string
+  author_details?: AuthorDetails
+  content?: string
+  created_at?: string
+  id?: string
+  updated_at?: string
+  url?: string
+  total_pages?: number
+  total_results?: number
+}
 export interface Movie {
   poster_path?: string | null
   adult?: boolean

@@ -1,4 +1,4 @@
-import { LatestMovie, Movie, Genre, PageInfo, AuthorDetails } from './model-common'
+import { LatestMovie, Movie, Genre, PageInfo, AuthorDetails, ReviewsDetails } from './model-common';
 import { MovieDetails } from './model-common'
 export interface ConfigurationResponse {
   images: {
@@ -48,17 +48,7 @@ export interface MovieDetailsVideosResponse {
 export interface MovieDetailsReviewsResponse {
   id?: number
   page?: number
-  results?: {
-    author?: string
-    author_details?: AuthorDetails
-    content?: string
-    created_at?: string
-    id?: string
-    updated_at?: string
-    url?: string
-    total_pages?: number
-    total_results?: number
-  }[]
+  results?: ReviewsDetails[]
 }
 export interface MovieDetailsSimilarResponse extends Movie, PageInfo {
   results: Movie[]
