@@ -75,17 +75,19 @@ async function init() {
       movieLiNode.setAttribute('data-movie-id', movie.id?.toString() || '')
       movieLiNode.setAttribute('data-movie-link', 'true')
       movieLiNode.innerHTML =
-        `<div class="movie-column">
-          <img class="responsive" loading="lazy" width="500" height="750" src="${configObj}w500/${movie.poster_path}" />
+        `<div class="movie-column with-poster">
+          <img class="movie-poster responsive" loading="lazy" width="500" height="750" src="${configObj}w500/${
+          movie.poster_path
+        }" />
         </div>
-        <div class="movie-column">
+        <div class="movie-column with-info">
            <h1 class="movie-title">${movie.title}<span class="movie-date">(${utils._getYear(
           movie.release_date
         )})</span><span class="movie-more">...more</span></h1><span class="movie-genres">${utils._getGenreTitle(
           movie.genre_ids,
           genres
         )}</span><p>${movie.overview}</p><p class="movie-stars">${utils._getStars(movie.vote_average)}</p></div>
-        <div class="movie-column"></div>
+        <div class="movie-column with-more-info"></div>
         ` || 'No Info'
       moviesNode.appendChild(movieLiNode)
     }
@@ -131,14 +133,13 @@ async function init() {
     const _movieId = _desired?.getAttribute('data-movie-id')
     movieMoreDetails.movieId = _movieId || ''
     if (_desired?.classList.contains('show-more')) {
-      // _desired.querySelectorAll('.movie-column')[2].innerHTML = ''
       _desired.classList.remove('show-more')
       return null
     } else {
       const _movieData = await theApp.getMovieMore(movieMoreDetails)
       _desired?.classList.toggle('show-more')
       //@ts-expect-error
-      _desired.querySelectorAll('.movie-column')[2].innerHTML = _addMovieMoreContent(_movieData)
+      _desired.querySelector('.with-more-info').innerHTML = _addMovieMoreContent(_movieData)
       console.log(_movieData)
       return _movieData
     }
