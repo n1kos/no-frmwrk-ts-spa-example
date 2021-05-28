@@ -131,7 +131,7 @@ async function init() {
     const _movieId = _desired?.getAttribute('data-movie-id')
     movieMoreDetails.movieId = _movieId || ''
     if (_desired?.classList.contains('show-more')) {
-      _desired.querySelectorAll('.movie-column')[2].innerHTML = ''
+      // _desired.querySelectorAll('.movie-column')[2].innerHTML = ''
       _desired.classList.remove('show-more')
       return null
     } else {
