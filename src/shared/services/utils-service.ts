@@ -42,3 +42,5 @@ export class Utils {
     return _dateRelease.toUpperCase() == 'NAN' ? '-' : _dateRelease
   }
 }
+
+module.exports = Utils

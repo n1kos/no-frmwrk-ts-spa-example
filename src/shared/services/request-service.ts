@@ -102,3 +102,5 @@ export class ApiRequestService {
     }
   }
 }
+
+module.exports = ApiRequestService

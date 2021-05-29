@@ -6,27 +6,35 @@
     "dev": "parcel --port 8080 ./src/index.html",
     "build": "parcel build ./src/index.html",
     "compile": "tsc",
-    "test": "test"
+    "test": "jest",
+    "coverage": "jest --coverage"
   },
   "engines": {
     "node": "14.16.0",
     "npm": "7.7.5"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.12.0",
+    "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.0.0",
     "eslint": "^7.26.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "jest": "^27.0.1",
     "lite-server": "^2.6.1",
     "parcel-bundler": "^1.12.5",
     "prettier": "2.3.0",
     "prettier-eslint": "^12.0.0",
+    "ts-jest": "^27.0.1",
     "typescript": "^3.9.9",
     "typescript-eslint": "*"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  }
 }
