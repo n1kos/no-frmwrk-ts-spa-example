@@ -32,3 +32,4 @@ Your objective is to build a small project named MovieRama. The application is y
      Use "star" rating instead of retrieved numerical
      Try to minimise empty space
      No max width restrictions
+     Used default language (en) and region (us)
