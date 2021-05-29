@@ -1,6 +1,6 @@
 {
   "name": "workable-app",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "parcel --port 8080 ./src/index.html",
