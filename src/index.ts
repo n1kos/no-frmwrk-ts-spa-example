@@ -1,9 +1,12 @@
 import 'regenerator-runtime/runtime'
 import { App } from './app'
+import { ButtonTop } from '../button-top'
 
 async function init() {
   const theApp = new App({ apiKey: 'bc50218d91157b1ba4f142ef7baaa6a0' })
+  const btnTopNode = document.getElementById('myBtn') as HTMLButtonElement
 
+  const topButton = new ButtonTop(btnTopNode)
   let observer: IntersectionObserver
   /**
    * we will allow the user some time between keypresses and actually activating the search
@@ -19,7 +22,8 @@ async function init() {
 
   theApp.moviesNode.addEventListener('click', theApp._showMoreDetails)
   theApp.searchBtnNode.addEventListener('keyup', _searchDebounced)
-
+  topButton.mybutton.addEventListener('click', topButton.topFunction)
+  window.addEventListener('scroll', topButton.scrollFunction)
   /**
    * need to have a way to go back to original results
    */
