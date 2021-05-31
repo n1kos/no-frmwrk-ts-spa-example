@@ -1,12 +1,12 @@
-import { APIToken, Genre, Movie, MovieDetailsMoreCollection, ReviewsDetails } from './shared/model/model-common'
+import { APIToken, Genre, Movie, MovieDetailsMoreCollection, ReviewsDetails } from '@/shared/model/model-common'
 import {
   ConfigurationResponse,
   GenreResponse,
   MovieDetailsResponse,
   MoviesSearchResponse,
   NowPlayingResponse,
-} from './shared/model/model-results'
-import { MoviesMoreRequest, MoviesNowRequest, MoviesSearchRequest } from './shared/model/model-requests'
+} from '@/shared/model/model-results'
+import { MoviesMoreRequest, MoviesNowRequest, MoviesSearchRequest } from '@/shared/model/model-requests'
 import { ApiRequestService as ApiService } from './shared/services/request-service'
 import { Utils } from './shared/services/utils-service'
 

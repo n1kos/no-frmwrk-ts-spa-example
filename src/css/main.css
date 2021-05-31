@@ -186,7 +186,7 @@ a.override-link {
 }
 
 @media screen and (max-width: 1320px) {
-  .movie-grid li div:first-child {
+  .movie-grid .with-poster {
     flex-grow: unset;
     width: auto;
   }

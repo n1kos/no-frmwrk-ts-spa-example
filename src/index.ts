@@ -1,6 +1,6 @@
 import 'regenerator-runtime/runtime'
 import { App } from './app'
-import { ButtonTop } from '../button-top'
+import { ButtonTop } from './shared/components/button-top'
 
 async function init() {
   const theApp = new App({ apiKey: 'bc50218d91157b1ba4f142ef7baaa6a0' })

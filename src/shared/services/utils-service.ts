@@ -2,12 +2,13 @@ import { MoviesNowRequest, MoviesSearchRequest } from '@/shared/model/model-requ
 import { Genre } from '@/shared/model/model-common'
 export class Utils {
   public debounce = (func: Function, wait: number) => {
-    let timeout: number
     return function executedFunction(...args: []) {
+      let timeout: ReturnType<typeof setTimeout>
       const later = () => {
         clearTimeout(timeout)
         func(...args)
       }
+      //@ts-expect-error use-before-assign
       clearTimeout(timeout)
       timeout = setTimeout(later, wait)
     }
